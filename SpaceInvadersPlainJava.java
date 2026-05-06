@@ -216,22 +216,29 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
             return new Rectangle(x, y, width, height);
         }
 
+       void moveBy(int dx, int dy) {
+            x += dx;
+            y += dy;
+        }    
+
         void moveLeft() {
-            x -= 5;
+            moveBy(-5, 0);
         }
 
         void moveRight() {
-            x += 5;
+            moveBy(5, 0);
         }
 
         void moveUp() {
-            y -= 5;
+            moveBy(0, -5);
         }
 
         void moveDown() {
-            y += 5;
+            moveBy(0, 5);
+       
         }
-    }
+      }
+    
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Space Invaders - Plain Java Version");
