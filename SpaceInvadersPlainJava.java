@@ -14,6 +14,11 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
     private static final int PLAYER_START_Y = 750;
     private static final int PLAYER_SIZE = 40;
     private static final int PLAYER_SPEED = 5;
+
+    private static final int ENEMY_MOVE_SPEED = 2;
+    private static final int ENEMY_DROP_DISTANCE = 20;
+
+    private int enemyDirection = 1;
     
     private static final int ENEMY_COUNT = 5;
     private static final int ENEMY_START_X = 90;
@@ -60,8 +65,38 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
         }
     }
 
+    private void moveEnemies() {
+    boolean shouldChangeDirection = false;
+
+    for (Sprite s : sprites) {
+        if (s.type.equals("enemy")) {
+            s.x += ENEMY_MOVE_SPEED * enemyDirection;
+
+            if (s.y + s.height >= player.y) {
+            player.dead = true;
+            }
+
+            if (s.x <= 0 || s.x + s.width >= SCREEN_WIDTH) {
+                shouldChangeDirection = true;
+            }
+        }
+    }
+
+    if (shouldChangeDirection) {
+        enemyDirection *= -1;
+
+        for (Sprite s : sprites) {
+            if (s.type.equals("enemy")) {
+                s.y += ENEMY_DROP_DISTANCE;
+            }
+        }
+    }
+}
+    
     private void updateGame() {
         t += 0.016;
+        
+        moveEnemies();
 
         List<Sprite> newBullets = new ArrayList<>();
 
@@ -162,6 +197,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
     score = 0;
     t = 0;
     lastPlayerShotTime = 0;
+    enemyDirection = 1;
 
     nextLevel();
 
@@ -186,19 +222,45 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
         g.drawString("Score: " + score, 20, 40);
 
         if (player.dead) {
-            g.drawString("GAME OVER", 180, 400);
-            g.setFont(new Font("Arial", Font.PLAIN, 18));
-            g.drawString("Press R to restart", 220, 440);
+            drawCenteredGameMessage(g, "GAME OVER", Color.RED, "Press R to restart");
             timer.stop();
+            return;
         }
 
         if (allEnemiesDead()) {
-            g.drawString("YOU WIN!", 220, 400);
-            g.setFont(new Font("Arial", Font.PLAIN, 18));
-            g.drawString("Press R to restart", 220, 440);
+            drawCenteredGameMessage(g, "YOU WIN!", new Color(0, 150, 0), "Press R to restart");
             timer.stop();
+            return;
         }
     }
+
+    private void drawCenteredGameMessage(Graphics g, String title, Color titleColor, String subtitle) {
+    Graphics2D g2 = (Graphics2D) g;
+
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+    Font titleFont = new Font("Arial", Font.BOLD, 64);
+    Font subtitleFont = new Font("Arial", Font.BOLD, 24);
+
+    int centerX = getWidth() / 2;
+    int centerY = getHeight() / 2;
+
+    g2.setFont(titleFont);
+    FontMetrics titleMetrics = g2.getFontMetrics();
+    int titleX = centerX - titleMetrics.stringWidth(title) / 2;
+    int titleY = centerY - 20;
+
+    g2.setColor(titleColor);
+    g2.drawString(title, titleX, titleY);
+
+    g2.setFont(subtitleFont);
+    FontMetrics subtitleMetrics = g2.getFontMetrics();
+    int subtitleX = centerX - subtitleMetrics.stringWidth(subtitle) / 2;
+    int subtitleY = titleY + 50;
+
+    g2.setColor(Color.BLACK);
+    g2.drawString(subtitle, subtitleX, subtitleY);
+}
 
     private boolean allEnemiesDead() {
         for (Sprite s : sprites) {
