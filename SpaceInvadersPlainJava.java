@@ -172,20 +172,21 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
         }
 
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_A:
-                player.moveLeft();
-                break;
+        case KeyEvent.VK_A:
+        player.moveLeft();
+        break;
 
-            case KeyEvent.VK_D:
-                player.moveRight();
-                break;
+        case KeyEvent.VK_D:
+        player.moveRight();
+        break;
 
-            case KeyEvent.VK_SPACE:
-                shoot(player);
-                break;
-        }
+        case KeyEvent.VK_SPACE:
+        shoot(player);
+        break;
+    }
 
-        repaint();
+    player.keepInsideHorizontalBounds(0, WIDTH);
+    repaint();
     }
 
     @Override
@@ -219,6 +220,16 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
         Rectangle getBounds() {
             return new Rectangle(x, y, width, height);
         }
+        
+        void keepInsideHorizontalBounds(int minX, int maxX) {
+            if (x < minX) {
+                x = minX;
+            }
+
+            if (x + width > maxX) {
+                x = maxX - width;
+        }
+    }
 
        void moveBy(int dx, int dy) {
             x += dx;
