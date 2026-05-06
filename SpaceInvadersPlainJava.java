@@ -21,6 +21,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
 
     private static final int INITIAL_LIVES = 3;
     private int lives = INITIAL_LIVES;
+    private boolean paused = false;
 
     private int enemyDirection = 1;
     
@@ -98,6 +99,10 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
 }
     
     private void updateGame() {
+        if (paused) {
+            return;
+        }
+        
         t += 0.016;
         
         moveEnemies();
@@ -207,6 +212,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
     lastPlayerShotTime = 0;
     enemyDirection = 1;
     lives = INITIAL_LIVES;
+    paused = false;
 
     nextLevel();
 
@@ -231,6 +237,19 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
         }
 
         drawHUD(g2);
+
+        if (paused) {
+            g2.setFont(new Font("Arial", Font.BOLD, 48));
+            g2.setColor(Color.YELLOW);
+
+            String pauseText = "PAUSED";
+            FontMetrics metrics = g2.getFontMetrics();
+            int x = getWidth() / 2 - metrics.stringWidth(pauseText) / 2;
+            int y = getHeight() / 2;
+
+            g2.drawString(pauseText, x, y);
+            return;
+        }
 
         if (player.dead) {
             drawCenteredGameMessage(g2, "GAME OVER", Color.RED, "Press R to restart");
@@ -267,7 +286,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
         // Controls text
         g2.setFont(new Font("Arial", Font.PLAIN, 13));
         g2.setColor(new Color(210, 210, 210));
-        g2.drawString("A / D = Move   |   SPACE = Shoot   |   R = Restart", barX + 20, barY + 55);
+        g2.drawString("A / D = Move   |   SPACE = Shoot   |   P = Pause/Resume   |   R = Restart", barX + 20, barY + 55);
 
         // Score box
         drawInfoBox(g2, "SCORE", String.valueOf(score), barX + 20, barY + 62, 150, 20,
@@ -367,6 +386,13 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
 
     @Override
     public void keyPressed(KeyEvent e) {
+
+        if (e.getKeyCode() == KeyEvent.VK_P) {
+            paused = !paused;
+            repaint();
+            return;
+        }
+        
         if (e.getKeyCode() == KeyEvent.VK_R) {
             resetGame();
             repaint();
