@@ -7,8 +7,14 @@ import java.util.List;
 
 public class SpaceInvadersPlainJava extends JPanel implements ActionListener, KeyListener {
 
-    private final int WIDTH = 600;
-    private final int HEIGHT = 800;
+    private static final int SCREEN_WIDTH = 600;
+    private static final int SCREEN_HEIGHT = 800;
+    private static final int PLAYER_SPEED = 5;
+    private static final int BULLET_SPEED = 5;
+    private static final int ENEMY_COUNT = 5;
+    private static final int ENEMY_START_X = 90;
+    private static final int ENEMY_START_Y = 150;
+    private static final int ENEMY_GAP = 100;
 
     private Timer timer;
     private double t = 0;
@@ -21,7 +27,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
     private List<Sprite> sprites = new ArrayList<>();
 
     public SpaceInvadersPlainJava() {
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         setBackground(Color.WHITE);
         setFocusable(true);
         addKeyListener(this);
@@ -36,8 +42,8 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
     }
 
     private void nextLevel() {
-        for (int i = 0; i < 5; i++) {
-            Sprite enemy = new Sprite(90 + i * 100, 150, 30, 30, "enemy", Color.RED);
+        for (int i = 0; i < ENEMY_COUNT; i++) {
+            Sprite enemy = new Sprite(ENEMY_START_X + i * ENEMY_GAP, ENEMY_START_Y, 30, 30, "enemy", Color.RED);
             sprites.add(enemy);
         }
     }
@@ -90,7 +96,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
         while (iterator.hasNext()) {
             Sprite s = iterator.next();
 
-            if (s.dead || s.y < 0 || s.y > HEIGHT) {
+            if (s.dead || s.y < 0 || s.y > SCREEN_HEIGHT) {
                 iterator.remove();
             }
         }
@@ -185,7 +191,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
         break;
     }
 
-    player.keepInsideHorizontalBounds(0, WIDTH);
+    player.keepInsideHorizontalBounds(0, SCREEN_WIDTH);
     repaint();
     }
 
@@ -237,20 +243,19 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
         }    
 
         void moveLeft() {
-            moveBy(-5, 0);
+            moveBy(-PLAYER_SPEED, 0);
         }
 
         void moveRight() {
-            moveBy(5, 0);
+            moveBy(PLAYER_SPEED, 0);
         }
 
         void moveUp() {
-            moveBy(0, -5);
+            moveBy(0, -BULLET_SPEED);
         }
 
         void moveDown() {
-            moveBy(0, 5);
-       
+            moveBy(0, BULLET_SPEED);
         }
       }
     
