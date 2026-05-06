@@ -17,6 +17,10 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
 
     private static final int ENEMY_MOVE_SPEED = 2;
     private static final int ENEMY_DROP_DISTANCE = 20;
+    
+
+    private static final int INITIAL_LIVES = 3;
+    private int lives = INITIAL_LIVES;
 
     private int enemyDirection = 1;
     
@@ -106,11 +110,15 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
                 case "enemybullet":
                     s.moveDown();
 
-                    if (s.getBounds().intersects(player.getBounds())) {
-                        player.dead = true;
-                        s.dead = true;
-                    }
-                    break;
+                if (s.getBounds().intersects(player.getBounds())) {
+                    lives--;
+                    s.dead = true;
+
+                    if (lives <= 0) {
+                    player.dead = true;
+                    }                        
+                }
+                break;
 
                 case "playerbullet":
                     s.moveUp();
@@ -198,6 +206,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
     t = 0;
     lastPlayerShotTime = 0;
     enemyDirection = 1;
+    lives = INITIAL_LIVES;
 
     nextLevel();
 
@@ -220,6 +229,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
         g.setColor(Color.BLACK);
         g.drawString("Controls: A = Left, D = Right, SPACE = Shoot", 20, 20);
         g.drawString("Score: " + score, 20, 40);
+        g.drawString("Lives: " + lives, 20, 60);
 
         if (player.dead) {
             drawCenteredGameMessage(g, "GAME OVER", Color.RED, "Press R to restart");
