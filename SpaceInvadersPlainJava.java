@@ -127,6 +127,24 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
 
     sprites.add(createBullet(who));
   }
+    private void resetGame() {
+    sprites.clear();
+
+    player = new Sprite(300, 750, 40, 40, "player", Color.BLUE);
+    sprites.add(player);
+
+    score = 0;
+    t = 0;
+    lastPlayerShotTime = 0;
+
+    nextLevel();
+
+    if (!timer.isRunning()) {
+        timer.start();
+    }
+
+    requestFocusInWindow();
+}
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -142,16 +160,16 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
         g.drawString("Score: " + score, 20, 40);
 
         if (player.dead) {
-            g.setFont(new Font("Arial", Font.BOLD, 40));
-            g.setColor(Color.RED);
             g.drawString("GAME OVER", 180, 400);
+            g.setFont(new Font("Arial", Font.PLAIN, 18));
+            g.drawString("Press R to restart", 220, 440);
             timer.stop();
         }
 
         if (allEnemiesDead()) {
-            g.setFont(new Font("Arial", Font.BOLD, 36));
-            g.setColor(Color.GREEN);
             g.drawString("YOU WIN!", 220, 400);
+            g.setFont(new Font("Arial", Font.PLAIN, 18));
+            g.drawString("Press R to restart", 220, 440);
             timer.stop();
         }
     }
@@ -173,7 +191,13 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (player.dead) {
+        if (e.getKeyCode() == KeyEvent.VK_R) {
+            resetGame();
+            repaint();
+            return;
+        }
+
+        if (player.dead || allEnemiesDead()) {
             return;
         }
 
