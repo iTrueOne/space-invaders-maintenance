@@ -12,6 +12,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
 
     private Timer timer;
     private double t = 0;
+    private int score = 0;
 
     private static final long PLAYER_SHOOT_COOLDOWN_MS = 300; // KAN-4: Controls how fast the player can shoot.
     private long lastPlayerShotTime = 0;
@@ -62,13 +63,15 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
                     s.moveUp();
 
                     for (Sprite enemy : sprites) {
-                        if (enemy.type.equals("enemy")) {
+                        if (!s.dead && enemy.type.equals("enemy")) {
                             if (s.getBounds().intersects(enemy.getBounds())) {
                                 enemy.dead = true;
                                 s.dead = true;
+                                score += 10;
                             }
-                        }
+                        }    
                     }
+                    
                     break;
 
                 case "enemy":
@@ -130,6 +133,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
 
         g.setColor(Color.BLACK);
         g.drawString("Controls: A = Left, D = Right, SPACE = Shoot", 20, 20);
+        g.drawString("Score: " + score, 20, 40);
 
         if (player.dead) {
             g.setFont(new Font("Arial", Font.BOLD, 40));
