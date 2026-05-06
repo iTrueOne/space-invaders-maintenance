@@ -13,7 +13,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
     private Timer timer;
     private double t = 0;
 
-    private static final long PLAYER_SHOOT_COOLDOWN_MS = 300;
+    private static final long PLAYER_SHOOT_COOLDOWN_MS = 300; // KAN-4: Controls how fast the player can shoot.
     private long lastPlayerShotTime = 0;
 
     private Sprite player;
