@@ -9,12 +9,24 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
 
     private static final int SCREEN_WIDTH = 600;
     private static final int SCREEN_HEIGHT = 800;
+
+    private static final int PLAYER_START_X = 300;
+    private static final int PLAYER_START_Y = 750;
+    private static final int PLAYER_SIZE = 40;
     private static final int PLAYER_SPEED = 5;
-    private static final int BULLET_SPEED = 5;
+    
     private static final int ENEMY_COUNT = 5;
     private static final int ENEMY_START_X = 90;
     private static final int ENEMY_START_Y = 150;
+    private static final int ENEMY_SIZE = 30;
     private static final int ENEMY_GAP = 100;
+
+    private static final int BULLET_WIDTH = 5;
+    private static final int BULLET_HEIGHT = 20;
+    private static final int BULLET_SPEED = 5;
+    private static final int PLAYER_BULLET_X_OFFSET = 18;
+    private static final int ENEMY_BULLET_X_OFFSET = 12;
+    private static final int ENEMY_BULLET_Y_OFFSET = 30;
 
     private Timer timer;
     private double t = 0;
@@ -32,7 +44,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
         setFocusable(true);
         addKeyListener(this);
 
-        player = new Sprite(300, 750, 40, 40, "player", Color.BLUE);
+        player = new Sprite(PLAYER_START_X, PLAYER_START_Y, PLAYER_SIZE, PLAYER_SIZE, "player", Color.BLUE);
         sprites.add(player);
 
         nextLevel();
@@ -43,7 +55,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
 
     private void nextLevel() {
         for (int i = 0; i < ENEMY_COUNT; i++) {
-            Sprite enemy = new Sprite(ENEMY_START_X + i * ENEMY_GAP, ENEMY_START_Y, 30, 30, "enemy", Color.RED);
+            Sprite enemy = new Sprite(ENEMY_START_X + i * ENEMY_GAP, ENEMY_START_Y, ENEMY_SIZE, ENEMY_SIZE, "enemy", Color.RED);
             sprites.add(enemy);
         }
     }
@@ -106,12 +118,26 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
         }
     }
 
-    private Sprite createBullet(Sprite who) {
-        if (who.type.equals("player")) {
-            return new Sprite(who.x + 18, who.y, 5, 20, "playerbullet", Color.BLACK);
+     private Sprite createBullet(Sprite who) {
+         if (who.type.equals("player")) {
+            return new Sprite(
+                who.x + PLAYER_BULLET_X_OFFSET,
+                who.y,
+                BULLET_WIDTH,
+                BULLET_HEIGHT,
+                "playerbullet",
+                Color.BLACK
+            );
         } else {
-            return new Sprite(who.x + 12, who.y + 30, 5, 20, "enemybullet", Color.BLACK);
-        }
+            return new Sprite(
+                who.x + ENEMY_BULLET_X_OFFSET,
+                who.y + ENEMY_BULLET_Y_OFFSET,
+                BULLET_WIDTH,
+                BULLET_HEIGHT,
+                "enemybullet",
+                Color.BLACK
+            );
+        }    
     }
 
     private void shoot(Sprite who) {
@@ -130,7 +156,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
     private void resetGame() {
     sprites.clear();
 
-    player = new Sprite(300, 750, 40, 40, "player", Color.BLUE);
+    player = new Sprite(PLAYER_START_X, PLAYER_START_Y, PLAYER_SIZE, PLAYER_SIZE, "player", Color.BLUE);
     sprites.add(player);
 
     score = 0;
