@@ -13,6 +13,9 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
     private Timer timer;
     private double t = 0;
 
+    private static final long PLAYER_SHOOT_COOLDOWN_MS = 300;
+    private long lastPlayerShotTime = 0;
+
     private Sprite player;
     private List<Sprite> sprites = new ArrayList<>();
 
@@ -103,8 +106,18 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
     }
 
     private void shoot(Sprite who) {
-        sprites.add(createBullet(who));
+    if (who.type.equals("player")) {
+        long currentTime = System.currentTimeMillis();
+
+        if (currentTime - lastPlayerShotTime < PLAYER_SHOOT_COOLDOWN_MS) {
+            return;
+        }
+
+        lastPlayerShotTime = currentTime;
     }
+
+    sprites.add(createBullet(who));
+  }
 
     @Override
     protected void paintComponent(Graphics g) {
