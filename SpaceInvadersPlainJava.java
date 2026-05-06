@@ -49,7 +49,7 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
 
     public SpaceInvadersPlainJava() {
         setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
-        setBackground(Color.WHITE);
+        setBackground(new Color(15, 18, 32));
         setFocusable(true);
         addKeyListener(this);
 
@@ -220,56 +220,134 @@ public class SpaceInvadersPlainJava extends JPanel implements ActionListener, Ke
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+    
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         for (Sprite s : sprites) {
-            g.setColor(s.color);
-            g.fillRect(s.x, s.y, s.width, s.height);
+            g2.setColor(s.color);
+            g2.fillRect(s.x, s.y, s.width, s.height);
         }
 
-        g.setColor(Color.BLACK);
-        g.drawString("Controls: A = Left, D = Right, SPACE = Shoot", 20, 20);
-        g.drawString("Score: " + score, 20, 40);
-        g.drawString("Lives: " + lives, 20, 60);
+        drawHUD(g2);
 
         if (player.dead) {
-            drawCenteredGameMessage(g, "GAME OVER", Color.RED, "Press R to restart");
+            drawCenteredGameMessage(g2, "GAME OVER", Color.RED, "Press R to restart");
             timer.stop();
             return;
         }
 
         if (allEnemiesDead()) {
-            drawCenteredGameMessage(g, "YOU WIN!", new Color(0, 150, 0), "Press R to restart");
+            drawCenteredGameMessage(g2, "YOU WIN!", new Color(0, 190, 0), "Press R to restart");
             timer.stop();
             return;
         }
     }
+    
+    private void drawHUD(Graphics2D g2) {
+        int barX = 15;
+        int barY = 15;
+        int barW = getWidth() - 30;
+        int barH = 90;
+
+        // Main HUD background
+        g2.setColor(new Color(20, 24, 38, 230));
+        g2.fillRoundRect(barX, barY, barW, barH, 25, 25);
+
+        // Top accent line
+        g2.setColor(new Color(0, 180, 255));
+        g2.fillRoundRect(barX, barY, barW, 6, 20, 20);
+
+        // Game title
+        g2.setFont(new Font("Arial", Font.BOLD, 24));
+        g2.setColor(Color.WHITE);
+        g2.drawString("SPACE INVADERS", barX + 20, barY + 32);
+
+        // Controls text
+        g2.setFont(new Font("Arial", Font.PLAIN, 13));
+        g2.setColor(new Color(210, 210, 210));
+        g2.drawString("A / D = Move   |   SPACE = Shoot   |   R = Restart", barX + 20, barY + 55);
+
+        // Score box
+        drawInfoBox(g2, "SCORE", String.valueOf(score), barX + 20, barY + 62, 150, 20,
+            new Color(255, 193, 7), new Color(255, 248, 225));
+
+    // Lives box
+    drawInfoBox(g2, "LIVES", String.valueOf(lives), barX + 190, barY + 62, 150, 20,
+            new Color(76, 175, 80), new Color(232, 245, 233));
+}
+
+    private void drawInfoBox(Graphics2D g2, String label, String value, int x, int y, int w, int h,
+                         Color accentColor, Color valueBg) {
+
+        // Outer box
+        g2.setColor(new Color(35, 40, 58));
+        g2.fillRoundRect(x, y, w, h + 18, 18, 18);
+
+        // Accent strip
+        g2.setColor(accentColor);
+        g2.fillRoundRect(x, y, w, 6, 12, 12);
+
+        // Label
+        g2.setFont(new Font("Arial", Font.BOLD, 12));
+        g2.setColor(new Color(220, 220, 220));
+        g2.drawString(label, x + 12, y + 20);
+
+        // Value background
+        g2.setColor(valueBg);
+        g2.fillRoundRect(x + 85, y + 8, 50, 22, 12, 12);
+
+        // Value text
+        g2.setFont(new Font("Arial", Font.BOLD, 16));
+        g2.setColor(new Color(25, 25, 25));
+        g2.drawString(value, x + 102, y + 25);
+    }
 
     private void drawCenteredGameMessage(Graphics g, String title, Color titleColor, String subtitle) {
-    Graphics2D g2 = (Graphics2D) g;
+        Graphics2D g2 = (Graphics2D) g;
 
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-    Font titleFont = new Font("Arial", Font.BOLD, 64);
-    Font subtitleFont = new Font("Arial", Font.BOLD, 24);
+        // Dark overlay
+        g2.setColor(new Color(0, 0, 0, 140));
+        g2.fillRect(0, 0, getWidth(), getHeight());
 
-    int centerX = getWidth() / 2;
-    int centerY = getHeight() / 2;
+        Font titleFont = new Font("Arial", Font.BOLD, 64);
+        Font subtitleFont = new Font("Arial", Font.BOLD, 24);
 
-    g2.setFont(titleFont);
-    FontMetrics titleMetrics = g2.getFontMetrics();
-    int titleX = centerX - titleMetrics.stringWidth(title) / 2;
-    int titleY = centerY - 20;
+        int centerX = getWidth() / 2;
+        int centerY = getHeight() / 2;
 
-    g2.setColor(titleColor);
-    g2.drawString(title, titleX, titleY);
+        // Title background box
+        int boxW = 420;
+        int boxH = 140;
+        int boxX = centerX - boxW / 2;
+        int boxY = centerY - 90;
 
-    g2.setFont(subtitleFont);
-    FontMetrics subtitleMetrics = g2.getFontMetrics();
-    int subtitleX = centerX - subtitleMetrics.stringWidth(subtitle) / 2;
-    int subtitleY = titleY + 50;
+        g2.setColor(new Color(20, 24, 38, 235));
+         g2.fillRoundRect(boxX, boxY, boxW, boxH, 30, 30);
 
-    g2.setColor(Color.BLACK);
-    g2.drawString(subtitle, subtitleX, subtitleY);
+        g2.setColor(titleColor);
+        g2.fillRoundRect(boxX, boxY, boxW, 8, 20, 20);
+
+        // Title
+        g2.setFont(titleFont);
+        FontMetrics titleMetrics = g2.getFontMetrics();
+        int titleX = centerX - titleMetrics.stringWidth(title) / 2;
+        int titleY = boxY + 68;
+
+        g2.setColor(titleColor);
+        g2.drawString(title, titleX, titleY);
+
+        // Subtitle
+        g2.setFont(subtitleFont);
+        FontMetrics subtitleMetrics = g2.getFontMetrics();
+        int subtitleX = centerX - subtitleMetrics.stringWidth(subtitle) / 2;
+        int subtitleY = titleY + 42;
+
+        g2.setColor(Color.WHITE);
+        g2.drawString(subtitle, subtitleX, subtitleY);
 }
 
     private boolean allEnemiesDead() {
